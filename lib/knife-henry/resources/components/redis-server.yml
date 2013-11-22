@@ -1,0 +1,48 @@
+---
+name: redis-server
+berks: |
+  cookbook 'redis', git: 'https://github.com/miah/chef-redis'
+role: |
+  name 'redis'
+
+  default_attributes(
+    'redis' => {
+      'install_type' => 'source',
+      'init_style' => 'init',
+      'source' => {
+        'version' => '2.6.14',
+        'sha' => 'fdf61c693e5c4908b4bb44c428d4a2b7568f05566c144c58fdf19c5cb12a9caf',
+      },
+      'config' => {
+        'dir' => '/srv/data/redis',
+        'bind' => '127.0.0.1',
+        'logfile' => '/var/log/redis.log',
+        'daemonize' => true,
+      },
+    },
+  )
+
+  run_list %w{
+    recipe[redis::install]
+    recipe[redis::server]
+    recipe[<%= @cookbook %>::redis-server]
+  }
+recipe: |
+  monit_d 'redis' do
+    service_type "process"
+    service_id node.redis.config.pidfile
+    start_command "/etc/init.d/redis-server start"
+    stop_command "/etc/init.d/redis-server stop"
+    service_tests [
+      {
+        'condition' => 'if failed host 127.0.0.1 port #{node.redis.config.port} 
+                        send "SET MONIT-TEST value\r\n" expect "OK" 
+                        send "EXISTS MONIT-TEST\r\n" expect ":1"',
+        'action' => 'restart'
+      },
+      {
+        'condition' => 'if 3 restarts within 5 cycles',
+        'action' => 'alert'
+      },
+    ]
+  end

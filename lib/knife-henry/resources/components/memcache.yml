@@ -1,0 +1,40 @@
+---
+name: memcache
+berks: |
+  cookbook 'memcached'
+role: |
+  name 'memcache'
+
+  default_attributes(
+    'memcached' => {
+      'port' => 11211,
+      'listen' => '127.0.0.1',
+      'maxconn' => 1024,
+      'memory' => 512,
+      'max_object_size' => '1m',
+    },
+  )
+
+  run_list %w{
+    recipe[memcached]
+    recipe[<%= @cookbook %>::memcache] 
+  }
+recipe: |
+  memcached_pid = "/var/run/memcached/memcached.pid"
+  if node.platform_family?("debian")
+    memcached_pid = "/var/run/memcached.pid"
+  end
+
+  monit_d 'memcache' do
+    service_type  "process"
+    service_id    memcached_pid
+    service_group "memcache"
+    start_command "/etc/init.d/memcached start"
+    stop_command  "/etc/init.d/memcached stop"
+    service_tests [
+      {'condition' => "if failed port #{node.memcached.port} proto memcache 2 times within 3 cycles",
+       'action' => "restart"},
+      {'condition' => "if 3 restarts within 15 cycles",
+       'action' => "alert"},
+    ]
+  end

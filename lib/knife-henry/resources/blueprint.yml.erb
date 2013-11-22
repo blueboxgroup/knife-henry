@@ -1,0 +1,31 @@
+--- 
+name: <%= @name %>
+roles:
+  bastion:
+    - base 
+  app:
+    - base
+    - nginx
+    - unicorn
+    - ruby
+    - nodejs
+    - mysql-client
+    - postgresql-client
+  db:
+    - base
+    - mysql-server
+    - postgresql-server
+  cache:
+    - base
+    - memcache
+  redis:
+    - base
+    - redis-server
+  worker:
+    - base
+    - ruby
+    - postgresql-client
+    - mysql-client
+vars:
+  ruby:
+    version: 1.9.3-p448

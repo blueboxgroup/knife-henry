@@ -1,0 +1,134 @@
+---
+name: base
+berks: |
+  cookbook 'chef-solo-search', git: 'https://github.com/edelight/chef-solo-search.git'
+  cookbook 'denyhosts', git: 'https://github.com/phlipper/chef-denyhosts.git'
+  cookbook 'packages', git: 'https://github.com/bbg-cookbooks/packages.git'
+  cookbook 'monit', git: 'https://github.com/blueboxgroup/monit.git'
+  cookbook 'user', git: 'https://github.com/fnichol/chef-user.git'
+  cookbook 'build-essential'
+  cookbook 'timezone-ii'
+  cookbook 'logrotate'
+  cookbook 'rsyslog'
+  cookbook 'openssh'
+  cookbook 'sudo'
+  cookbook 'cron'
+  cookbook 'yum'
+  cookbook 'apt'
+role: |
+  name 'base'
+
+  default_attributes(
+    'tz' => 'UTC',
+    'authorization' => {
+      'sudo' => {
+        'users' => %w{admin},
+        'passwordless' => true,
+        'include_sudoers_d' => true,
+        'sudoers_defaults' => [
+          'env_reset',
+          'secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"'
+        ],
+      },
+    },
+    'user' => {
+      'ssh_keygen' => false,
+    },
+    'users' => %w{admin},
+    'openssh' => {
+      'server' => {
+        'rsa_authentication' => "yes",
+        'pub_key_authentication' => "yes",
+        'permit_root_login' => "without-password"
+      }
+    }
+  )
+
+  run_list %w{
+    recipe[chef-solo-search]
+    recipe[timezone-ii]
+    recipe[denyhosts]
+    recipe[user::data_bag]
+    recipe[openssh]
+    recipe[rsyslog]
+    recipe[sudo]
+    recipe[logrotate]
+    recipe[<%= @cookbook %>::base]
+  }
+recipe: |
+  %w{vim passwd postfix telnet}.each do |pkg|
+    package pkg
+  end
+
+  package "sendmail" do
+    action :purge
+  end
+
+  rsyslog_pid = "/var/run/syslogd.pid"
+  if node.platform_family?("debian")
+    rsyslog_pid = "/var/run/rsyslogd.pid"
+  end
+
+  monit_d 'rsyslog' do
+    service_type "process"
+    service_id rsyslog_pid
+    service_group "system"
+    start_command "/etc/init.d/rsyslog start"
+    stop_command "/etc/init.d/rsyslog stop"
+    service_tests [
+      {
+        'condition' => "if 4 restarts within 5 cycles",
+        'action' => "timeout"
+      }
+    ]
+  end
+
+  monit_d 'postfix' do
+    service_type "process"
+    service_id "/var/spool/postfix/pid/master.pid"
+    service_group "system"
+    start_command "/etc/init.d/postfix start"
+    stop_command "/etc/init.d/postfix stop"
+    service_tests [
+      {
+        'condition' => "if failed host 127.0.0.1 port 25 type tcp protocol smtp 
+                        with timeout 15 seconds",
+        'action' => "restart"},
+      {
+        'condition' => "if 3 restarts within 5 cycles",
+        'action' => "alert"
+      },
+    ]
+  end
+
+  monit_d 'sshd' do
+    service_type "process"
+    service_id "/var/run/sshd.pid"
+    service_group "system"
+    start_command "/etc/init.d/sshd start"
+    stop_command "/etc/init.d/sshd stop"
+    service_tests [
+      {
+        'condition' => "if failed port 22 proto ssh 3 times within 5 cycles",
+        'action' => "restart"
+      },
+      {
+        'condition' => "if 3 restarts within 5 cycles",
+        'action' => "alert"
+      },
+    ]
+  end
+
+  monit_d 'crond' do
+    service_type "process"
+    service_id "/var/run/crond.pid"
+    service_group "system"
+    start_command "/etc/init.d/crond start"
+    stop_command "/etc/init.d/crond stop"
+    service_tests [
+      {
+        'condition' => "if 3 restarts within 5 cycles",
+        'action' => "alert"
+      },
+    ]
+  end

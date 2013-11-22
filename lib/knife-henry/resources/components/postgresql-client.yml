@@ -1,0 +1,23 @@
+---
+name: postgresql-client
+berks: |
+  cookbook 'postgresql', '>= 3.0', git: 'https://github.com/opscode-cookbooks/postgresql.git'
+role: |
+  name 'postgresql-client'
+
+  default_attributes(
+    'postgresql' => {
+      'version' => '9.2',
+      'enable_pgdg_yum' => true,
+    },
+  )
+
+  override_attributes(
+    'postgresql' => {
+      'client' => { 'packages' => %w{postgresql92} },
+    }
+  )
+
+  run_list %w{
+    recipe[postgresql::client]
+  }

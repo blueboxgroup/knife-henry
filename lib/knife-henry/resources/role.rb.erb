@@ -1,0 +1,7 @@
+name '<%= @name %>'
+
+run_list %w{
+<% @components.each do |component| %>
+  role[<%= component.name %>]
+<% end %>
+}

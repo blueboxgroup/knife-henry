@@ -1,0 +1,53 @@
+---
+name: apache
+berks: |
+  cookbook 'apache2'
+role: |
+  name 'apache'
+  
+  default_attributes(
+    'apache' => {
+      'contact' => 'hostmaster@bluebox.net',
+      'prefork' => {
+        'startservers' => 4,
+        'serverlimit' => 16,
+        'maxspareservers' => 32,
+        'maxclients' => 400,
+        'maxrequestsperchild' => 10_000,
+      },
+    },
+  )
+  
+  run_list %w{
+    recipe[apache2]
+    recipe[<%= @cookbook %>::apache]
+  }
+recipe: |
+  apache_init = "/etc/init.d/httpd"
+  if node.platform_family?("debian")
+    apache_init = "/etc/init.d/apache2"
+  end
+
+  monit_d 'apache' do
+    service_type "process"
+    service_id node.apache2.pid_file
+    service_group "app"
+    start_command "#{apache_init} start"
+    stop_command "#{apache_init} stop"
+    service_tests [
+      {
+        'condition' => "if failed port 80 proto http for 2 cycles",
+        'action' => "restart"
+      },
+      {
+        'condition' => "if 4 restarts within 5 cycles",
+        'action' => "timeout"
+      }
+    ]
+  end
+
+attributes: |
+  default[:site][:approot] = "/srv/apps"
+  default[:site][:apps] = ["default"]
+templates:
+  - apache.conf.erb: |

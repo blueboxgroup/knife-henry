@@ -1,0 +1,21 @@
+---
+name: nodejs
+berks: |
+  cookbook 'nodejs', git: 'https://github.com/mdxp/nodejs-cookbook.git'
+role: |
+  name 'nodejs'
+
+  default_attributes(
+    'nodejs' => {
+      'npm' => '1.3.11',
+      'install_method' => 'source',
+      'version' => '0.10.20',
+      'checksum' => 'b5af00d4d43644f37caa2dad5fa81e6f898ebb7b238f02a1cddfcff11c81e649',
+      'make_threads' => 4,
+    },
+  )
+
+  run_list %w{
+    recipe[nodejs]
+    recipe[nodejs::npm]
+  }

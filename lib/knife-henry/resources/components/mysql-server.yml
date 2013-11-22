@@ -1,0 +1,19 @@
+---
+name: mysql-server
+berks: |
+  cookbook 'percona', git: 'https://github.com/phlipper/chef-percona.git'
+role: |
+  name 'mysql-server'
+  
+  default_attributes(
+    'percona' => {
+      'server' => {
+        'datadir' => '/srv/data/mysql',
+      },
+    },
+  )
+
+  run_list %w{
+    recipe[percona::server]
+    recipe[<%= @cookbook %>::mysql-server]
+  }

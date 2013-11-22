@@ -1,0 +1,131 @@
+---
+name: nginx-passenger
+berks: |
+  cookbook 'nginx'
+role: |
+  name 'nginx-passenger'
+  
+  default_attributes(
+    'nginx' => {
+      'passenger' => {
+        'version' => '4.0.16',
+        'root' => '/usr/local/rbenv/versions/1.9.3-p448/lib/ruby/gems/1.9.1/gems/passenger-4.0.16',
+        'gem_binary' => '/usr/local/rbenv/shims/gem',
+        'ruby' => '/usr/local/rbenv/shims/ruby',
+      },
+      'version' => '1.4.3',
+      'install_method' => 'source',
+      'worker_processes' => 2,
+      'init_style' => 'init',
+      'default_site_enabled' => false,
+      'source' => {
+        'checksum' => 'ae123885c923a6c3f5bab0a8b7296ef21c4fdf6087834667ebbc16338177de84',
+        'modules' => [ "nginx::passenger",
+                       "nginx::http_ssl_module",
+                       "nginx::headers_more_module",
+                       "nginx::http_gzip_static_module",
+                       "nginx::http_realip_module",
+                       "nginx::http_spdy_module",
+                       "nginx::ipv6" ],
+      },
+    },
+  )
+ 
+  run_list %w{
+    recipe[nginx]
+    recipe[<%= @cookbook %>::nginx-passenger]
+  }
+recipe: |
+  logrotate_app "nginx" do
+    cookbook "logrotate"
+    path "#{node.nginx.log_dir}/*log"
+    options ["missingok", "compress", "notifempty"]
+    frequency "daily"
+    rotate 30
+    postrotate "[ -f #{node.nginx.pid} ] && kill -USR1 `cat #{node.nginx.pid}` 2>/dev/null ||:"
+  end
+
+  monit_d 'nginx' do
+    service_type "process"
+    service_id   node.nginx.pid 
+    service_group "app"
+    start_command "/etc/init.d/nginx start"
+    stop_command "/etc/init.d/nginx stop"
+    service_tests [
+      {
+        'condition' => "if failed port 80 proto http for 2 cycles",
+        'action' => "restart"
+      },
+      {
+        'condition' => "if 4 restarts within 5 cycles",
+        'action' => "timeout"
+      }
+    ]
+  end
+
+  node.site.apps.each do |app|
+    directory "#{node.site.approot}/#{app}" do
+      owner "deploy"
+      group "deploy"
+      mode "0755"
+      action :create
+      recursive true
+    end
+
+    template "#{node.nginx.dir}/sites-available/#{app}" do
+      source "nginx.conf.erb"
+      owner "root"
+      group "root"
+      mode  "0644"
+      variables({
+        :approot => node.site.approot,
+        :app => app,
+      })
+    end
+
+    bash "enable #{app} site" do
+      code "nxensite #{app}"
+      notifies :reload, "service[nginx]", :delayed
+    end
+  end
+attributes: |
+  default[:site][:approot] = "/srv/apps"
+  default[:site][:apps] = ["default"]
+templates:
+  - nginx.conf.erb: |
+      server {
+        listen 80;
+        server_name <%= @app %>;
+
+        root <%= @approot %>/<%= @app %>/current/public;
+        access_log /var/log/nginx/access_<%= @app %>.log;
+        error_log /var/log/nginx/error_<%= @app %>.log;
+
+        client_max_body_size 25M;
+
+        # Don't allow bogus HTTP verbs
+        if ($request_method !~ ^(GET|HEAD|PUT|POST|DELETE|OPTIONS)$ ) {
+          return 405; # method not allowed
+        }
+
+        try_files /system/maintenance.html $uri @passenger;
+
+        location ~ \.(ico|jpg|gif|png|swf|html)% {
+          expires max;
+        }
+
+        location @passenger {
+          root <%= @approot %>/<%= @app %>/current/public;
+
+          passenger_enabled on;
+
+          proxy_set_header X-Request-Start "t=${msec}000";
+          proxy_set_header X-Forwarded-Proto $scheme;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          proxy_set_header X-Real-IP $remote_addr;
+          proxy_set_header Host $host;
+          proxy_set_header Connection '';
+
+          proxy_redirect off;
+        }
+      }

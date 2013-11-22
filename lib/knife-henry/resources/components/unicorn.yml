@@ -1,0 +1,19 @@
+name: unicorn
+role: |
+  name 'unicorn'
+
+  run_list %w{
+    recipe[<%= @cookbook %>::unicorn]
+  }
+recipe: |
+  template "#{node.nginx.dir}/conf.d/unicorn.conf" do
+    source  "unicorn.conf.erb"
+    owner   "root"
+    group   "root"
+    mode    "0644"
+  end
+templates:
+  - unicorn.conf.erb: |
+      upstream unicorn {
+        server 127.0.0.1:8080 fail_timeout=0;
+      }

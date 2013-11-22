@@ -1,0 +1,10 @@
+---
+name: mysql-client
+berks: |
+  cookbook 'percona', git: 'https://github.com/phlipper/chef-percona.git'
+role: |
+  name 'mysql-client'
+
+  run_list %w{
+    recipe[percona::client]
+  }

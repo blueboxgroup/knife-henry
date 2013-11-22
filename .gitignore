@@ -1,0 +1,5 @@
+*.gem
+.Gemfile
+/.bundle
+/.ruby-version
+/Gemfile.lock

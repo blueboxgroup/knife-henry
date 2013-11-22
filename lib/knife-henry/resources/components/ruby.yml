@@ -1,0 +1,25 @@
+---
+name: ruby
+berks: |
+  cookbook 'build-essential'
+  cookbook 'ruby_build', git: 'https://github.com/fnichol/chef-ruby_build'
+  cookbook 'rbenv', git: 'https://github.com/fnichol/chef-rbenv'
+role: |
+  name 'ruby'
+
+  default_attributes(
+    'rbenv' => {
+      'rubies' => %w{<%= @vars["version"] %>},
+      'default_ruby' => '<%= @vars["version"] %>',
+      'gems' => {
+        '<%= @vars["version"] %>' => [
+          {'name' => 'bundler'},
+        ],
+      },
+    },
+  )
+
+  run_list %w{
+    recipe[ruby_build]
+    recipe[rbenv::system]
+  }

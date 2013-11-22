@@ -1,0 +1,20 @@
+---
+driver_plugin: bluebox
+ 
+platforms:
+- name: scientific-6.4
+  driver_config:
+    image_id: fba94d97-bdfa-4d54-8a8c-692e321c2c08
+ 
+suites:
+<% @roles.each do |role| %>
+- name: <%= role.name %>
+  run_list:
+  - role[base]
+  - role[<%= role.name %>]
+  attributes:
+    authorization:
+      sudo:
+        users: 
+        - kitchen
+<% end %>
