@@ -91,12 +91,19 @@ HenryCorp
 ```
 
 ## Installation
-Install the knife-henry gem:
+
+```text
+gem "knife-henry", :git => "git://github.com/blueboxgroup/knife-henry.git"
+```
+
+or
+
 ```bash
 git clone git@github.blueboxgrid.com:bluebox-tech/knife-henry.git
 cd knife-henry
 rake install
 ```
+
 ## Using knife-henry
 
 ### Creating a blueprint
@@ -116,3 +123,13 @@ To build the new repository from the blueprint, kick off the factory with:
 ```bash
 knife henry repo build HenryCorp.yml
 ```
+
+### Adding/Overriding components
+
+To add a new component, build out our YAML file and add it to the user library with:
+
+```bash
+knife henry component load COMPONENT.yml
+```
+
+New components will override built-in components with the same name.
