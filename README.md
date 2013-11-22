@@ -126,7 +126,7 @@ knife henry repo build HenryCorp.yml
 
 ### Adding/Overriding components
 
-To add a new component, build out our YAML file and add it to the user library with:
+To add a new component, build out a YAML file and add it to the user library with:
 
 ```bash
 knife henry component load COMPONENT.yml
