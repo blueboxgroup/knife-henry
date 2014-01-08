@@ -7,9 +7,9 @@ role: |
   
   default_attributes(
     'nginx' => {
-      'install_method' => 'package',
-      'repo_source' => 'nginx',
-      'worker_processes' => 2,
+      'install_method'       => 'package',
+      'repo_source'          => 'nginx',
+      'worker_processes'     => 2,
       'default_site_enabled' => false,
     },
   )
@@ -19,65 +19,62 @@ role: |
     recipe[<%= @cookbook %>::nginx]
   }
 recipe: |
-  logrotate_app "nginx" do
-    cookbook "logrotate"
-    path "/var/log/nginx/*log"
-    options ["missingok", "compress", "notifempty"]
-    frequency "daily"
+  logrotate_app 'nginx' do
+    path '/var/log/nginx/*log'
+    options %w{missingok compress notifempty}
+    frequency 'daily'
     rotate 30
     postrotate "[ -f #{node.nginx.pid} ] && kill -USR1 `cat #{node.nginx.pid}` 2>/dev/null ||:"
   end
 
-  monit_d 'nginx' do
-    service_type "process"
-    service_id node.nginx.pid
-    service_group "app"
-    start_command "/etc/init.d/nginx start"
-    stop_command "/etc/init.d/nginx stop"
-    service_tests [
+  monit_check 'nginx' do
+    check_id node.nginx.pid
+    group 'app'
+    start '/etc/init.d/nginx start'
+    stop '/etc/init.d/nginx stop'
+    tests [
       {
-        'condition' => "if failed port 80 proto http for 2 cycles",
-        'action' => "restart"
+        'condition' => 'failed port 80 proto http for 2 cycles',
+        'action'    => 'restart',
       },
       {
-        'condition' => "if 4 restarts within 5 cycles",
-        'action' => "timeout"
-      }
+        'condition' => '4 restarts within 5 cycles',
+        'action'    => 'timeout',
+      },
     ]
   end
 
   node.site.apps.each do |app|
     directory "#{node.site.approot}/#{app}" do
-      owner "deploy"
-      group "deploy"
-      mode "0755"
+      owner 'deploy'
+      group 'deploy'
+      mode '0755'
       action :create
       recursive true
     end
 
     template "#{node.nginx.dir}/sites-available/#{app}" do
-      source "nginx.conf.erb"
-      owner "root"
-      group "root"
-      mode  "0644"
-      variables({
+      source 'nginx.conf.erb'
+      owner 'root'
+      group 'root'
+      mode  '0644'
+      variables(
         :approot => node.site.approot,
         :app => app,
-      })
+      )
     end
 
     bash "enable #{app} site" do
       code "nxensite #{app}"
-      notifies :reload, "service[nginx]", :delayed
+      notifies :reload, 'service[nginx]', :delayed
     end
   end
 attributes: |
-  default[:site][:approot] = "/srv/apps"
-  default[:site][:apps] = ["default"]
+  default[:site][:approot] = '/srv/apps'
+  default[:site][:apps] = ['default']
 templates:
   - nginx.conf.erb: |
       server {
-
         listen 80;
         server_name <%= @app %>;
 
@@ -98,5 +95,4 @@ templates:
         location ~ \.(ico|jpg|gif|png|swf|html)% {
           expires max;
         }
-
       }

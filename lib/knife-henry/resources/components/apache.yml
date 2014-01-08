@@ -1,7 +1,7 @@
 ---
 name: apache
 berks: |
-  cookbook 'apache2'
+  cookbook 'apache2', '~> 1.8'
 role: |
   name 'apache'
   
@@ -23,31 +23,28 @@ role: |
     recipe[<%= @cookbook %>::apache]
   }
 recipe: |
-  apache_init = "/etc/init.d/httpd"
-  if node.platform_family?("debian")
-    apache_init = "/etc/init.d/apache2"
-  end
+  apache_init = value_for_platform_family(
+                  'rhel'   => '/etc/init.d/httpd',
+                  'debian' => '/etc/init.d/apache2',
+                )
 
-  monit_d 'apache' do
-    service_type "process"
-    service_id node.apache2.pid_file
-    service_group "app"
-    start_command "#{apache_init} start"
-    stop_command "#{apache_init} stop"
-    service_tests [
+  monit_check 'apache' do
+    check_id node.apache2.pid_file
+    group 'app'
+    start "#{apache_init} start"
+    stop "#{apache_init} stop"
+    tests [
       {
-        'condition' => "if failed port 80 proto http for 2 cycles",
-        'action' => "restart"
+        'condition' => 'failed port 80 proto http for 2 cycles',
+        'action' => 'restart'
       },
       {
-        'condition' => "if 4 restarts within 5 cycles",
-        'action' => "timeout"
+        'condition' => '4 restarts within 5 cycles',
+        'action' => 'timeout'
       }
     ]
   end
 
 attributes: |
-  default[:site][:approot] = "/srv/apps"
-  default[:site][:apps] = ["default"]
-templates:
-  - apache.conf.erb: |
+  default[:site][:approot] = '/srv/apps'
+  default[:site][:apps] = ['default']

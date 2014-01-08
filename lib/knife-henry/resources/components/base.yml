@@ -22,12 +22,12 @@ role: |
     'tz' => 'UTC',
     'authorization' => {
       'sudo' => {
-        'users' => %w{admin},
-        'passwordless' => true,
+        'users'             => %w{admin},
+        'passwordless'      => true,
         'include_sudoers_d' => true,
-        'sudoers_defaults' => [
+        'sudoers_defaults'  => [
           'env_reset',
-          'secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"'
+          'secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"',
         ],
       },
     },
@@ -37,22 +37,23 @@ role: |
     'users' => %w{admin},
     'openssh' => {
       'server' => {
-        'rsa_authentication' => "yes",
-        'pub_key_authentication' => "yes",
-        'permit_root_login' => "without-password"
-      }
+        'rsa_authentication'     => 'yes',
+        'pub_key_authentication' => 'yes',
+        'permit_root_login'      => 'without-password',
+      },
     }
   )
 
   run_list %w{
     recipe[chef-solo-search]
     recipe[timezone-ii]
+    recipe[rsyslog]
+    recipe[openssh]
     recipe[denyhosts]
     recipe[user::data_bag]
-    recipe[openssh]
-    recipe[rsyslog]
     recipe[sudo]
     recipe[logrotate]
+    recipe[monit]
     recipe[<%= @cookbook %>::base]
   }
 recipe: |
@@ -60,75 +61,81 @@ recipe: |
     package pkg
   end
 
-  package "sendmail" do
+  package 'sendmail' do
     action :purge
   end
 
-  rsyslog_pid = "/var/run/syslogd.pid"
-  if node.platform_family?("debian")
-    rsyslog_pid = "/var/run/rsyslogd.pid"
-  end
+  rsyslog_pid = value_for_platform_family(
+                  'rhel'   => '/var/run/syslogd.pid',
+                  'debian' => '/var/run/rsyslogd.pid',
+                )
 
-  monit_d 'rsyslog' do
-    service_type "process"
-    service_id rsyslog_pid
-    service_group "system"
-    start_command "/etc/init.d/rsyslog start"
-    stop_command "/etc/init.d/rsyslog stop"
-    service_tests [
+  monit_check 'rsyslog' do
+    check_id rsyslog_pid
+    group 'system'
+    start '/etc/init.d/rsyslog start'
+    stop '/etc/init.d/rsyslog stop'
+    tests [
       {
-        'condition' => "if 4 restarts within 5 cycles",
-        'action' => "timeout"
+        'condition' => '4 restarts within 5 cycles',
+        'action'    => 'timeout',
       }
     ]
   end
 
-  monit_d 'postfix' do
-    service_type "process"
-    service_id "/var/spool/postfix/pid/master.pid"
-    service_group "system"
-    start_command "/etc/init.d/postfix start"
-    stop_command "/etc/init.d/postfix stop"
+  monit_check 'postfix' do
+    check_id '/var/spool/postfix/pid/master.pid'
+    group 'system'
+    start '/etc/init.d/postfix start'
+    stop  '/etc/init.d/postfix stop'
     service_tests [
       {
-        'condition' => "if failed host 127.0.0.1 port 25 type tcp protocol smtp 
-                        with timeout 15 seconds",
-        'action' => "restart"},
+        'condition' => 'failed port 25 proto smtp 2 times within 3 cycles',
+        'action'    => 'restart',
+      },
       {
-        'condition' => "if 3 restarts within 5 cycles",
-        'action' => "alert"
+        'condition' => '3 restarts within 5 cycles',
+        'action'    => 'alert',
       },
     ]
   end
 
-  monit_d 'sshd' do
-    service_type "process"
-    service_id "/var/run/sshd.pid"
-    service_group "system"
-    start_command "/etc/init.d/sshd start"
-    stop_command "/etc/init.d/sshd stop"
-    service_tests [
+  sshd_init = value_for_platform_family(
+               'rhel'   => '/etc/init.d/sshd',
+               'debian' => '/etc/init.d/ssh'
+             )
+
+  monit_check 'sshd' do
+    check_id '/var/run/sshd.pid'
+    group 'system'
+    start "#{sshd_init} start"
+    stop "#{sshd_init} stop"
+    tests [
       {
-        'condition' => "if failed port 22 proto ssh 3 times within 5 cycles",
-        'action' => "restart"
+        'condition' => 'failed port 22 proto ssh 2 times within 3 cycles',
+        'action'    => 'restart',
       },
       {
-        'condition' => "if 3 restarts within 5 cycles",
-        'action' => "alert"
+        'condition' => '3 restarts within 5 cycles',
+        'action'    => 'alert',
       },
     ]
   end
 
-  monit_d 'crond' do
-    service_type "process"
-    service_id "/var/run/crond.pid"
-    service_group "system"
-    start_command "/etc/init.d/crond start"
-    stop_command "/etc/init.d/crond stop"
-    service_tests [
+  crond_init = value_for_platform_family(
+                 'rhel'   => '/etc/init.d/crond',
+                 'debian' => '/etc/init.d/cron',
+               )
+
+  monit_check 'crond' do
+    check_id '/var/run/crond.pid'
+    group 'system'
+    start "#{crond_init} start"
+    stop "#{crond_init} stop"
+    tests [
       {
-        'condition' => "if 3 restarts within 5 cycles",
-        'action' => "alert"
+        'condition' => '3 restarts within 5 cycles',
+        'action'    => 'alert',
       },
     ]
   end

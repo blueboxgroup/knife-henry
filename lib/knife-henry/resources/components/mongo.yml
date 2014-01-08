@@ -8,9 +8,9 @@ role: |
   default_attributes(
     'mongodb' => {
       'package_version' => '2.4.7',
-      'bind_ip' => '127.0.0.1',
-      'logpath' => '/var/log/mongodb',
-      'dbpath' => '/srv/data/mongodb',
+      'bind_ip'         => '0.0.0.0',
+      'logpath'         => '/var/log/mongodb',
+      'dbpath'          => '/srv/data/mongodb',
     }
   )
   
@@ -22,20 +22,15 @@ role: |
 recipe: |
   mongod_init = "#{node.mongodb.init_dir}/#{node.mongodb.instance_name}"
 
-  monit_d 'mongo' do
-    service_type "process"
-    service_id "#{node.mongodb.dbpath}/mongod.lock"
-    service_group "mongo"
-    start_command "#{mongod_init} start"
-    stop_command "#{mongod_init} stop"
-    service_tests [
+  monit_check 'mongo' do
+    check_id "#{node.mongodb.dbpath}/mongod.lock"
+    group 'mongo'
+    start "#{mongod_init} start"
+    stop "#{mongod_init} stop"
+    tests [
       {
-        'condition' => "if failed port #{node.mongodb.port} proto http for 2 cycles",
-        'action' => "restart"
+        'condition' => '3 restarts within 10 cycles',
+        'action'    => 'timeout',
       },
-      {
-        'condition' => "if 3 restarts within 10 cycles",
-        'action' => "timeout"
-      }
     ]
   end

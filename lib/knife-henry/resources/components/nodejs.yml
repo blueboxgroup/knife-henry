@@ -7,11 +7,11 @@ role: |
 
   default_attributes(
     'nodejs' => {
-      'npm' => '1.3.11',
       'install_method' => 'source',
-      'version' => '0.10.20',
-      'checksum' => 'b5af00d4d43644f37caa2dad5fa81e6f898ebb7b238f02a1cddfcff11c81e649',
-      'make_threads' => 4,
+      'make_threads'   => 4,
+      'version'        => '0.10.24',
+      'checksum'       => '6ef93f4a5b53cdd4471786dfc488ba9977cb3944285ed233f70c508b50f0cb5f',
+      'npm'            => '1.3.23',
     },
   )
 

@@ -9,9 +9,9 @@ role: |
 
   default_attributes(
     'rbenv' => {
-      'rubies' => %w{<%= @vars["version"] %>},
+      'rubies'       => %w{<%= @vars["version"] %>},
       'default_ruby' => '<%= @vars["version"] %>',
-      'gems' => {
+      'gems'         => {
         '<%= @vars["version"] %>' => [
           {'name' => 'bundler'},
         ],

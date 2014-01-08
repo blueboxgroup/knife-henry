@@ -1,20 +1,22 @@
 ---
-driver_plugin: bluebox
+driver:
+  name: vagrant
+
+provisioner:
+  name: chef_zero
  
 platforms:
-- name: scientific-6.4
-  driver_config:
-    image_id: fba94d97-bdfa-4d54-8a8c-692e321c2c08
- 
+  - name: ubuntu-12.04
+  - name: centos-6.5
+
+settings:
+  parallel: true
+  destroy: passing
+
 suites:
 <% @roles.each do |role| %>
-- name: <%= role.name %>
-  run_list:
-  - role[base]
-  - role[<%= role.name %>]
-  attributes:
-    authorization:
-      sudo:
-        users: 
-        - kitchen
+  - name: <%= role.name %>
+    run_list:
+      - role[<%= role.name %>]
+    attributes: { authorization: { sudo: { users: ['kitchen'] } } }
 <% end %>

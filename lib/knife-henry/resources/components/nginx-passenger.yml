@@ -8,25 +8,25 @@ role: |
   default_attributes(
     'nginx' => {
       'passenger' => {
-        'version' => '4.0.16',
-        'root' => '/usr/local/rbenv/versions/1.9.3-p448/lib/ruby/gems/1.9.1/gems/passenger-4.0.16',
+        'version'    => '4.0.33',
+        'root'       => '/usr/local/rbenv/versions/1.9.3-p448/lib/ruby/gems/1.9.1/gems/passenger-4.0.33',
         'gem_binary' => '/usr/local/rbenv/shims/gem',
-        'ruby' => '/usr/local/rbenv/shims/ruby',
+        'ruby'       => '/usr/local/rbenv/shims/ruby',
       },
-      'version' => '1.4.3',
-      'install_method' => 'source',
-      'worker_processes' => 2,
-      'init_style' => 'init',
+      'version'              => '1.4.4',
+      'install_method'       => 'source',
+      'worker_processes'     => 2,
+      'init_style'           => 'init',
       'default_site_enabled' => false,
-      'source' => {
-        'checksum' => 'ae123885c923a6c3f5bab0a8b7296ef21c4fdf6087834667ebbc16338177de84',
-        'modules' => [ "nginx::passenger",
-                       "nginx::http_ssl_module",
-                       "nginx::headers_more_module",
-                       "nginx::http_gzip_static_module",
-                       "nginx::http_realip_module",
-                       "nginx::http_spdy_module",
-                       "nginx::ipv6" ],
+      'source'               => {
+        'checksum' => '7c989a58e5408c9593da0bebcd0e4ffc3d892d1316ba5042ddb0be5b0b4102b9',
+        'modules'  => [ "nginx::passenger",
+                        "nginx::http_ssl_module",
+                        "nginx::headers_more_module",
+                        "nginx::http_gzip_static_module",
+                        "nginx::http_realip_module",
+                        "nginx::http_spdy_module",
+                        "nginx::ipv6" ],
       },
     },
   )
@@ -36,61 +36,59 @@ role: |
     recipe[<%= @cookbook %>::nginx-passenger]
   }
 recipe: |
-  logrotate_app "nginx" do
-    cookbook "logrotate"
+  logrotate_app 'nginx' do
     path "#{node.nginx.log_dir}/*log"
-    options ["missingok", "compress", "notifempty"]
-    frequency "daily"
+    options  %w{missingok compress notifempty}
+    frequency 'daily'
     rotate 30
     postrotate "[ -f #{node.nginx.pid} ] && kill -USR1 `cat #{node.nginx.pid}` 2>/dev/null ||:"
   end
 
-  monit_d 'nginx' do
-    service_type "process"
-    service_id   node.nginx.pid 
-    service_group "app"
-    start_command "/etc/init.d/nginx start"
-    stop_command "/etc/init.d/nginx stop"
-    service_tests [
+  monit_check 'nginx' do
+    check_id node.nginx.pid
+    group 'app'
+    start '/etc/init.d/nginx start'
+    stop '/etc/init.d/nginx stop'
+    tests [
       {
-        'condition' => "if failed port 80 proto http for 2 cycles",
-        'action' => "restart"
+        'condition' => 'failed port 80 proto http for 2 cycles',
+        'action'    => 'restart',
       },
       {
-        'condition' => "if 4 restarts within 5 cycles",
-        'action' => "timeout"
-      }
+        'condition' => '4 restarts within 5 cycles',
+        'action'    => 'timeout',
+      },
     ]
   end
 
   node.site.apps.each do |app|
     directory "#{node.site.approot}/#{app}" do
-      owner "deploy"
-      group "deploy"
-      mode "0755"
+      owner 'deploy'
+      group 'deploy'
+      mode '0755'
       action :create
       recursive true
     end
 
     template "#{node.nginx.dir}/sites-available/#{app}" do
-      source "nginx.conf.erb"
-      owner "root"
-      group "root"
-      mode  "0644"
-      variables({
+      source 'nginx.conf.erb'
+      owner 'root'
+      group 'root'
+      mode  '0644'
+      variables(
         :approot => node.site.approot,
         :app => app,
-      })
+      )
     end
 
     bash "enable #{app} site" do
       code "nxensite #{app}"
-      notifies :reload, "service[nginx]", :delayed
+      notifies :reload, 'service[nginx]', :delayed
     end
   end
 attributes: |
-  default[:site][:approot] = "/srv/apps"
-  default[:site][:apps] = ["default"]
+  default[:site][:approot] = '/srv/apps'
+  default[:site][:apps] = ['default']
 templates:
   - nginx.conf.erb: |
       server {

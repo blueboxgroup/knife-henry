@@ -8,15 +8,15 @@ role: |
   default_attributes(
     'redis' => {
       'install_type' => 'source',
-      'init_style' => 'init',
       'source' => {
-        'version' => '2.6.14',
-        'sha' => 'fdf61c693e5c4908b4bb44c428d4a2b7568f05566c144c58fdf19c5cb12a9caf',
+        'version' => '2.8.3',
+        'sha'     => 'c0aa8065c230f9df1b77d1dd1e8840655e7846e23fe23f8e339d6246aec3e63f',
       },
-      'config' => {
-        'dir' => '/srv/data/redis',
-        'bind' => '127.0.0.1',
-        'logfile' => '/var/log/redis.log',
+      'init_style' => 'init',
+      'config'     => {
+        'dir'       => '/srv/data/redis',
+        'bind'      => '0.0.0.0',
+        'logfile'   => '/var/log/redis.log',
         'daemonize' => true,
       },
     },
@@ -28,21 +28,15 @@ role: |
     recipe[<%= @cookbook %>::redis-server]
   }
 recipe: |
-  monit_d 'redis' do
-    service_type "process"
-    service_id node.redis.config.pidfile
-    start_command "/etc/init.d/redis-server start"
-    stop_command "/etc/init.d/redis-server stop"
-    service_tests [
+  monit_check 'redis' do
+    check_id node.redis.config.pidfile
+    group 'redis'
+    start '/etc/init.d/redis-server start'
+    stop '/etc/init.d/redis-server stop'
+    tests [
       {
-        'condition' => 'if failed host 127.0.0.1 port #{node.redis.config.port} 
-                        send "SET MONIT-TEST value\r\n" expect "OK" 
-                        send "EXISTS MONIT-TEST\r\n" expect ":1"',
-        'action' => 'restart'
-      },
-      {
-        'condition' => 'if 3 restarts within 5 cycles',
-        'action' => 'alert'
+        'condition' => '3 restarts within 5 cycles',
+        'action'    => 'alert',
       },
     ]
   end

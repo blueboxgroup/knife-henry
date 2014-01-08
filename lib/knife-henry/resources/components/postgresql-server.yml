@@ -7,36 +7,40 @@ role: |
 
   default_attributes(
     'postgresql' => {
-      'config' => {
-        'listen_addresses' => '*',
-        'wal_level' => 'hot_standby',
-        'synchronous_commit' => 'on',
-        'max_wal_senders' => 5,
-        'wal_keep_segments' => 32,
-        'hot_standby' => 'on',
-        'restart_after_crash' => 'off',
-        'replication_timeout' => 5000,         # mseconds
-        'wal_receiver_status_interval' => 2,   # seconds
-        'max_standby_streaming_delay' => -1,
-        'max_standby_archive_delay' => -1,
-        'synchronous_commit' => 'on',
-        'restart_after_crash' => 'off',
-        'hot_standby_feedback' => 'on',
-      },
-      'version' => '9.2',
-      'dir' => '/srv/data/pgsql/9.2/data',
+      'version'         => '9.3',
+      'dir'             => '/srv/data/pgsql/9.3/data',
       'enable_pgdg_yum' => true,
-      'password' => { 'postgres' => 'changeme' },
-      'config_pgtune' => { 'max_connections' => '500' }
+      'password'        => { 'postgres' => 'changeme' },
+      'config_pgtune'   => { 'max_connections' => '500' },
+      'config'          => {
+        'listen_addresses'             => '*',
+        'wal_level'                    => 'hot_standby',
+        'synchronous_commit'           => 'on',
+        'max_wal_senders'              => 5,
+        'wal_keep_segments'            => 32,
+        'hot_standby'                  => 'on',
+        'restart_after_crash'          => 'off',
+        'replication_timeout'          => 5000, # mseconds
+        'wal_receiver_status_interval' => 2, # seconds
+        'max_standby_streaming_delay'  => -1,
+        'max_standby_archive_delay'    => -1,
+        'synchronous_commit'           => 'on',
+        'restart_after_crash'          => 'off',
+        'hot_standby_feedback'         => 'on',
+      },
     },
   )
 
   override_attributes(
     'postgresql' => {
-      'client' => { 'packages' => %w{postgresql92} },
-      'server' => { 'packages' => %w{postgresql92-server postgresql92-devel postgresql92-contrib},
-                    'service_name' => 'postgresql-9.2' },
-    }
+      'client' => {
+        'packages' => %w{postgresql93}
+      },
+      'server' => { 
+        'packages' => %w{postgresql93-server postgresql93-devel postgresql93-contrib},
+        'service_name' => 'postgresql-9.3'
+      },
+    },
   )
 
   run_list %w{
@@ -44,4 +48,3 @@ role: |
     recipe[postgresql::config_initdb]
     recipe[postgresql::config_pgtune]
   }
-

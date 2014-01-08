@@ -8,7 +8,7 @@ role: |
   default_attributes(
     'memcached' => {
       'port' => 11211,
-      'listen' => '127.0.0.1',
+      'listen' => '0.0.0.0',
       'maxconn' => 1024,
       'memory' => 512,
       'max_object_size' => '1m',
@@ -20,21 +20,25 @@ role: |
     recipe[<%= @cookbook %>::memcache] 
   }
 recipe: |
-  memcached_pid = "/var/run/memcached/memcached.pid"
-  if node.platform_family?("debian")
-    memcached_pid = "/var/run/memcached.pid"
-  end
 
-  monit_d 'memcache' do
-    service_type  "process"
-    service_id    memcached_pid
-    service_group "memcache"
-    start_command "/etc/init.d/memcached start"
-    stop_command  "/etc/init.d/memcached stop"
-    service_tests [
-      {'condition' => "if failed port #{node.memcached.port} proto memcache 2 times within 3 cycles",
-       'action' => "restart"},
-      {'condition' => "if 3 restarts within 15 cycles",
-       'action' => "alert"},
+  memcached_pid = value_for_platform_family(
+                    'rhel'   => '/var/run/memcached/memcached.pid',
+                    'debian' => '/var/run/memcached.pid',
+                  )
+
+  monit_check 'memcache' do
+    check_id memcached_pid
+    group 'memcache'
+    start '/etc/init.d/memcached start'
+    stop '/etc/init.d/memcached stop'
+    tests [
+      {
+        'condition' => "failed port #{node.memcached.port} proto memcache 2 times within 3 cycles",
+        'action'    => 'restart',
+      },
+      {
+        'condition' => '3 restarts within 15 cycles',
+        'action'    => 'alert',
+      },
     ]
   end

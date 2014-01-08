@@ -7,10 +7,10 @@ role: |
   }
 recipe: |
   template "#{node.nginx.dir}/conf.d/unicorn.conf" do
-    source  "unicorn.conf.erb"
-    owner   "root"
-    group   "root"
-    mode    "0644"
+    source  'unicorn.conf.erb'
+    owner   'root'
+    group   'root'
+    mode    '0644'
   end
 templates:
   - unicorn.conf.erb: |
