@@ -82,7 +82,7 @@ module KnifeHenry
     end
 
     def render_attributes (repo, cookbook)
-      path = File.expand_path(File.join(repo,"site-cookbooks", cookbook))
+      path = File.expand_path(File.join(repo, "site-cookbooks", cookbook))
       File.open(File.join(path, "attributes", "default.rb"), 'a') do |attr|
         attr.write(attributes)
       end

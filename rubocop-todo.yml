@@ -20,9 +20,6 @@ RedundantSelf:
 ShadowingOuterLocalVariable:
   Enabled: false
 
-SpaceAfterComma:
-  Enabled: false
-
 SpaceAfterMethodName:
   Enabled: false
 
