@@ -11,9 +11,6 @@ EmptyLiteral:
 HashSyntax:
   Enabled: false
 
-IfUnlessModifier:
-  Enabled: false
-
 IndentationWidth:
   Enabled: false
 

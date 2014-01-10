@@ -9,9 +9,7 @@ module KnifeHenry
       validate!(opts)
       @name = opts['name']
       @components = Array.new
-      unless opts['components'].is_a?(Array)
-        opts['components'] = Array.new
-      end
+      opts['components'].is_a?(Array) || opts['components'] = Array.new
       opts['components'].each do |c|
         component = YAML.safe_load_file( KnifeHenry.component(c) )
         @components << KnifeHenry::Component.new(component)
