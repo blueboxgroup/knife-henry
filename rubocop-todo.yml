@@ -11,9 +11,6 @@ EmptyLiteral:
 HashSyntax:
   Enabled: false
 
-IndentationWidth:
-  Enabled: false
-
 MethodLength:
   Max: 12
 
