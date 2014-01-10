@@ -25,17 +25,17 @@ module KnifeHenry
 
     def render (context = {})
       validate_context!(context)
-      render_role(context[:repo], context[:cookbook]) if self.role
-      render_recipe(context[:repo], context[:cookbook]) if self.recipe
-      render_attributes(context[:repo], context[:cookbook]) if self.attributes
-      self.templates.each do |template|
+      render_role(context[:repo], context[:cookbook]) if role
+      render_recipe(context[:repo], context[:cookbook]) if recipe
+      render_attributes(context[:repo], context[:cookbook]) if attributes
+      templates.each do |template|
         render_template(template, context)
       end
     end
 
     def save
       user_lib = KnifeHenry.const_get(:USER_LIB)
-      f = File.join(user_lib, "resources", "components", "#{self.name}.yml")
+      f = File.join(user_lib, "resources", "components", "#{name}.yml")
       File.open(f, 'w') do |file|
         file.write(self.to_yaml)
       end
@@ -67,24 +67,24 @@ module KnifeHenry
     def render_recipe (repo, cookbook)
       repo = File.expand_path(repo)
       path = File.join(repo, "site-cookbooks", cookbook)
-      File.open(File.join(path, "recipes", "#{self.name}.rb"), 'w') do |recipe|
-        recipe.write(self.recipe)
+      File.open(File.join(path, "recipes", "#{name}.rb"), 'w') do |recipe|
+        recipe.write(recipe)
       end
     end
 
     def render_role (repo, cookbook)
       path = File.expand_path(repo)
-      template = Erubis::Eruby.new(self.role)
-      File.open(File.join(path, "roles", "#{self.name}.rb"), 'w') do |role|
+      template = Erubis::Eruby.new(role)
+      File.open(File.join(path, "roles", "#{name}.rb"), 'w') do |role|
         role.write( template.evaluate(:cookbook => cookbook,
-                                      :vars     => self.vars) )
+                                      :vars     => vars) )
       end
     end
 
     def render_attributes (repo, cookbook)
       path = File.expand_path(File.join(repo,"site-cookbooks", cookbook))
       File.open(File.join(path, "attributes", "default.rb"), 'a') do |attr|
-        attr.write(self.attributes)
+        attr.write(attributes)
       end
     end
 

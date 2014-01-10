@@ -1,13 +1,13 @@
 module KnifeHenry
-  def self.version
+  def version
     '0.1.1'
   end
 
-  def self.prerelease?
-    Gem::Version.new(self.version).prerelease?
+  def prerelease?
+    Gem::Version.new(version).prerelease?
   end
 
-  def self.post_install_message
+  def post_install_message
     <<-TXT.gsub(/^ {6}/, '').strip
       Thanks for installing knife-henry!
 

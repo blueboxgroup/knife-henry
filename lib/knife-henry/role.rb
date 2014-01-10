@@ -18,21 +18,21 @@ module KnifeHenry
 
     def render (context = {})
       validate_context!(context)
-      self.components.each do |component|
+      components.each do |component|
         component.render(context)
       end
       src = File.read(KnifeHenry.resource("role.rb.erb"))
       template = Erubis::Eruby.new(src)
-      file = File.join(context[:repo], "roles", "#{self.name}.rb")
+      file = File.join(context[:repo], "roles", "#{name}.rb")
       File.open(file, 'w') do |role|
-        role.write( template.evaluate(:name       => self.name,
-                                      :components => self.components) )
+        role.write( template.evaluate(:name       => name,
+                                      :components => components) )
       end
     end
 
     def berks
       berks = []
-      self.components.each do |component|
+      components.each do |component|
         berks << component.berks.split(/\r?\n/) if component.berks
       end
       return berks.flatten

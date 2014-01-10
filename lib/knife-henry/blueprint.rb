@@ -32,9 +32,9 @@ module KnifeHenry
     end
 
     def embed_vars
-      self.roles.each do |role|
+      roles.each do |role|
         role.components.each do |component|
-          component.vars = self.vars[component.name]
+          component.vars = vars[component.name]
         end
       end
     end
