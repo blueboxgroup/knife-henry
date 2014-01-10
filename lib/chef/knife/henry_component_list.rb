@@ -23,6 +23,7 @@ class Chef
       end
 
       private
+
       def load_libs
         components = Array.new
         henry_components = load_lib( KnifeHenry.const_get(:HENRY_LIB) )

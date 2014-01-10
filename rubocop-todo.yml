@@ -5,9 +5,6 @@
 Documentation:
   Enabled: false
 
-EmptyLinesAroundAccessModifier:
-  Enabled: false
-
 EmptyLinesAroundBody:
   Enabled: false
 

@@ -19,6 +19,7 @@ class Chef
       end
 
       private
+
       def validate!
         unless @name_args.size >= 1
           ui.fatal "No blueprint specified."

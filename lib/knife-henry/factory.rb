@@ -35,6 +35,7 @@ module KnifeHenry
     end
 
     private
+
     def validate!
       repo = self.solo.name_args.first
       if Dir.exist?(repo)

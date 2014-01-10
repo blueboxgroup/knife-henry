@@ -42,6 +42,7 @@ module KnifeHenry
     end
 
     private
+
     def validate! (opts)
       unless opts['name']
         raise ArgumentError, "Missing required parameter 'name'for component."

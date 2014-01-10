@@ -15,7 +15,9 @@ module KnifeHenry
     def render
 
     end
+
     private
+
     def validate! (blueprint)
       unless blueprint['name']
         raise ArgumentError, "Blueprint missing required argument: name"
