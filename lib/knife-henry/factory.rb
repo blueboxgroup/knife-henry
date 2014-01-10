@@ -38,7 +38,7 @@ module KnifeHenry
 
     def validate!
       repo = solo.name_args.first
-      raise ArgumentError, "Specified repo already exists!" if Dir.exist?(repo)
+      fail ArgumentError, "Specified repo already exists!" if Dir.exist?(repo)
     end
 
     def render_toplevel_files

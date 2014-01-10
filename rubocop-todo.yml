@@ -20,9 +20,6 @@ RedundantSelf:
 ShadowingOuterLocalVariable:
   Enabled: false
 
-SignalException:
-  Enabled: false
-
 SpaceAfterComma:
   Enabled: false
 

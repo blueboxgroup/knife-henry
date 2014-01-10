@@ -42,7 +42,7 @@ module KnifeHenry
 
     def validate! (opts)
       unless opts['name']
-        raise ArgumentError, "Missing required argument for role: name"
+        fail ArgumentError, "Missing required argument for role: name"
       end
     end
 
@@ -50,9 +50,9 @@ module KnifeHenry
       repo = File.expand_path(context[:repo])
       cookbook = File.join(repo, "site-cookbooks", context[:cookbook])
       if !Dir.exist?(repo)
-        raise ArgumentError, "Repo not found: #{context[:repo]}"
+        fail ArgumentError, "Repo not found: #{context[:repo]}"
       elsif !Dir.exist?(cookbook)
-        raise ArgumentError, "Site cookbook not found: #{context[:cookbook]}"
+        fail ArgumentError, "Site cookbook not found: #{context[:cookbook]}"
       end
     end
   end
