@@ -8,10 +8,10 @@ class Chef
         require 'knife-henry/component'
       end
 
-      banner "knife henry component list [COMPONENT, ...]"
+      banner 'knife henry component list [COMPONENT, ...]'
 
       def run
-        ui.info "Loading component library..."
+        ui.info 'Loading component library...'
         if @name_args.empty?
           @components = load_libs
         else

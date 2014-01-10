@@ -18,7 +18,7 @@ module KnifeHenry
 
     def validate!(blueprint)
       unless blueprint['name']
-        fail ArgumentError, "Blueprint missing required argument: name"
+        fail ArgumentError, 'Blueprint missing required argument: name'
       end
     end
 

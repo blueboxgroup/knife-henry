@@ -4,8 +4,8 @@ require_relative '../lib/knife-henry/blueprint'
 class TestBlueprint < Minitest::Test
   TEST_BLUEPRINT = {
     'name' => 'blueprint',
-    'roles' => { 'test' => ["base"] },
-    'vars' => { 'base' => { 'users' => ['admin', 'deploy'] } }
+    'roles' => { 'test' => ['base'] },
+    'vars' => { 'base' => { 'users' => %w{admin deploy} } }
   }
 
   def setup
@@ -43,7 +43,7 @@ class TestBlueprint < Minitest::Test
       assert_instance_of Hash, vars
       vars.each_pair do |k, v|
         assert_equal 'users', k
-        assert_equal ['admin', 'deploy'], v
+        assert_equal %w{admin deploy}, v
       end
     end
   end

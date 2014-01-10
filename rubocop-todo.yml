@@ -19,9 +19,3 @@ RedundantSelf:
 
 ShadowingOuterLocalVariable:
   Enabled: false
-
-StringLiterals:
-  Enabled: false
-
-WordArray:
-  Enabled: false

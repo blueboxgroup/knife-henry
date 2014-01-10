@@ -38,7 +38,7 @@ module KnifeHenry
 
     def validate!
       repo = solo.name_args.first
-      fail ArgumentError, "Specified repo already exists!" if Dir.exist?(repo)
+      fail ArgumentError, 'Specified repo already exists!' if Dir.exist?(repo)
     end
 
     def render_toplevel_files
@@ -50,15 +50,15 @@ module KnifeHenry
 
     def render_berksfile(berks)
       repo = solo.name_args.first
-      File.open(File.join(repo, "Berksfile"), 'w') do |berksfile|
-        berksfile.write(berks.sort.uniq.join("\n"))
+      File.open(File.join(repo, 'Berksfile'), 'w') do |berksfile|
+        berksfile.write(berks.sort.uniq.join('\n'))
       end
     end
 
     def render_kitchen_yml
       repo = solo.name_args.first
       roles = blueprint.roles
-      kitchen = File.read(KnifeHenry.resource("kitchen.yml.erb"))
+      kitchen = File.read(KnifeHenry.resource('kitchen.yml.erb'))
       template = Erubis::Eruby.new(kitchen)
       File.open("#{repo}/.kitchen.yml", 'w') do |kitchen|
         kitchen.write(template.evaluate(:roles => roles))

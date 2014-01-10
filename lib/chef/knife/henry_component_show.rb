@@ -8,7 +8,7 @@ class Chef
         require 'knife-henry/component'
       end
 
-      banner "knife henry component show COMPONENT"
+      banner 'knife henry component show COMPONENT'
 
       def run
         validate!
@@ -21,7 +21,7 @@ class Chef
 
       def validate!
         unless @name_args.size >= 1
-          ui.fatal "Please specify a component."
+          ui.fatal 'Please specify a component.'
           show_usage
           exit 1
         end

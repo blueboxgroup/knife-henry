@@ -8,7 +8,7 @@ class Chef
         require 'safe_yaml'
       end
 
-      banner "knife henry component load COMPONENT_YML, ..."
+      banner 'knife henry component load COMPONENT_YML, ...'
 
       def run
         validate!
@@ -21,7 +21,7 @@ class Chef
 
       def validate!
         unless @name_args.size >= 1
-          ui.fatal "You must specify a component definition."
+          ui.fatal 'You must specify a component definition.'
           show_usage
           exit 1
         end

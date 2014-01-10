@@ -35,7 +35,7 @@ module KnifeHenry
 
     def save
       user_lib = KnifeHenry.const_get(:USER_LIB)
-      f = File.join(user_lib, "resources", "components", "#{name}.yml")
+      f = File.join(user_lib, 'resources', 'components', "#{name}.yml")
       File.open(f, 'w') do |file|
         file.write(self.to_yaml)
       end
@@ -45,13 +45,13 @@ module KnifeHenry
 
     def validate!(opts)
       unless opts['name']
-        fail ArgumentError, "Missing required parameter 'name'for component."
+        fail ArgumentError, 'Missing required parameter "name" for component.'
       end
     end
 
     def validate_context!(context)
       repo = File.expand_path(context[:repo])
-      cookbook = File.join(repo, "site-cookbooks", context[:cookbook])
+      cookbook = File.join(repo, 'site-cookbooks', context[:cookbook])
       if !Dir.exist?(repo)
         fail ArgumentError, "Repo not found: #{context[:repo]}"
       elsif !Dir.exist?(cookbook)
@@ -66,8 +66,8 @@ module KnifeHenry
 
     def render_recipe(repo, cookbook)
       repo = File.expand_path(repo)
-      path = File.join(repo, "site-cookbooks", cookbook)
-      File.open(File.join(path, "recipes", "#{name}.rb"), 'w') do |recipe|
+      path = File.join(repo, 'site-cookbooks', cookbook)
+      File.open(File.join(path, 'recipes', "#{name}.rb"), 'w') do |recipe|
         recipe.write(recipe)
       end
     end
@@ -75,23 +75,23 @@ module KnifeHenry
     def render_role(repo, cookbook)
       path = File.expand_path(repo)
       template = Erubis::Eruby.new(role)
-      File.open(File.join(path, "roles", "#{name}.rb"), 'w') do |role|
+      File.open(File.join(path, 'roles', "#{name}.rb"), 'w') do |role|
         role.write(template.evaluate(:cookbook => cookbook,
                                      :vars     => vars))
       end
     end
 
     def render_attributes(repo, cookbook)
-      path = File.expand_path(File.join(repo, "site-cookbooks", cookbook))
-      File.open(File.join(path, "attributes", "default.rb"), 'a') do |attr|
+      path = File.expand_path(File.join(repo, 'site-cookbooks', cookbook))
+      File.open(File.join(path, 'attributes', 'default.rb'), 'a') do |attr|
         attr.write(attributes)
       end
     end
 
     def render_template(template, context)
       repo = File.expand_path(context[:repo])
-      path = File.join(repo, "site-cookbooks", context[:cookbook])
-      out = File.join(path, "templates", "default", template.name)
+      path = File.join(repo, 'site-cookbooks', context[:cookbook])
+      out = File.join(path, 'templates', 'default', template.name)
       File.open(out, 'w') do |t|
         t.write(template.content)
       end

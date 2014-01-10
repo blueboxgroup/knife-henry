@@ -4,7 +4,7 @@ require_relative '../lib/knife-henry/role'
 class TestRole < Minitest::Test
   TEST_ROLE = {
     'name' => 'test',
-    'components' => ["base"]
+    'components' => ['base']
   }
 
   def setup
