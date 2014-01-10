@@ -2,7 +2,6 @@ require 'minitest/autorun'
 require_relative '../lib/knife-henry/component'
 
 class TestComponent < Minitest::Test
-
   TEST_COMPONENT = {
     'name' => 'component',
     'berks' => 'cookbook "test"',
@@ -76,5 +75,4 @@ default['component']['attr_two'] = 2
   def test_respond_to_tests
     assert_respond_to @component, :tests
   end
-
 end

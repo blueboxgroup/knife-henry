@@ -2,7 +2,6 @@ require 'minitest/autorun'
 require_relative '../lib/knife-henry/role'
 
 class TestRole < Minitest::Test
-
   TEST_ROLE = {
     'name' => 'test',
     'components' => ["base"]
@@ -47,5 +46,4 @@ class TestRole < Minitest::Test
   def test_berks_is_array
     assert_instance_of Array, @role.berks
   end
-
 end

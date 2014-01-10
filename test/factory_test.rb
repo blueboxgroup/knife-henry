@@ -2,7 +2,6 @@ require 'minitest/autorun'
 require_relative '../lib/knife-henry/factory'
 
 class TestFactory < Minitest::Test
-
   TEST_BLUEPRINT = {
     'name' => 'blueprint',
     'roles' => {'test' => ["base"]},
@@ -41,5 +40,4 @@ class TestFactory < Minitest::Test
   def test_responds_to_assemble
     assert_respond_to @factory, :assemble
   end
-
 end

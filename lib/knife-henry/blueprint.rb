@@ -12,9 +12,7 @@ module KnifeHenry
       embed_vars
     end
 
-    def render
-
-    end
+    def render; end
 
     private
 

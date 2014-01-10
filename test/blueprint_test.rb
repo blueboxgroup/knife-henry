@@ -2,7 +2,6 @@ require 'minitest/autorun'
 require_relative '../lib/knife-henry/blueprint'
 
 class TestBlueprint < Minitest::Test
-
   TEST_BLUEPRINT = {
     'name' => 'blueprint',
     'roles' => {'test' => ["base"]},
@@ -48,5 +47,4 @@ class TestBlueprint < Minitest::Test
       end
     end
   end
- 
 end
