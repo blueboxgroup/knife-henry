@@ -70,7 +70,7 @@ default['component']['attr_two'] = 2
 
   def test_responds_to_templates
     assert_respond_to @component, :templates
-  end 
+  end
 
   def test_respond_to_tests
     assert_respond_to @component, :tests

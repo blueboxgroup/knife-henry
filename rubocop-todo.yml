@@ -23,9 +23,6 @@ ShadowingOuterLocalVariable:
 StringLiterals:
   Enabled: false
 
-TrailingWhitespace:
-  Enabled: false
-
 UselessAssignment:
   Enabled: false
 

@@ -40,7 +40,7 @@ class Chef
         ui.info "Rendering blueprint: #{name}.yml"
         input = File.read(KnifeHenry.resource("blueprint.yml.erb"))
         template = Erubis::Eruby.new(input)
-        File.open("#{name}.yml", 'w') do |blueprint|	
+        File.open("#{name}.yml", 'w') do |blueprint|
           blueprint.write(template.evaluate(:name => name))
         end
       end
