@@ -35,7 +35,6 @@ class Chef
         requests.each do |request|
           components << load_component(request)
         end
-        return components
       end
 
       def load_component(component)
@@ -52,7 +51,6 @@ class Chef
             components << File.basename(file).gsub(/\.yml$/, '')
           end
         end
-        return components
       end
     end
   end

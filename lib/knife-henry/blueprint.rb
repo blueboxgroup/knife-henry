@@ -28,7 +28,6 @@ module KnifeHenry
         roles << KnifeHenry::Role.new('name'       => name,
                                       'components' => components)
       end
-      return roles
     end
 
     def embed_vars

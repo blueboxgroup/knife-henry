@@ -33,7 +33,6 @@ class Chef
           ui.error "#{name}.yml already exists! Skipping."
           return false
         end
-        return true
       end
 
       def render_blueprint(name)

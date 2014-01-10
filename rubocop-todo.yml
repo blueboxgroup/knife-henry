@@ -11,9 +11,6 @@ HashSyntax:
 MethodLength:
   Max: 12
 
-RedundantReturn:
-  Enabled: false
-
 RedundantSelf:
   Enabled: false
 

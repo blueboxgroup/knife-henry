@@ -35,7 +35,7 @@ module KnifeHenry
       components.each do |component|
         berks << component.berks.split(/\r?\n/) if component.berks
       end
-      return berks.flatten
+      berks.flatten
     end
 
     private
