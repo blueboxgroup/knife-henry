@@ -21,13 +21,13 @@ file "/tmp/component-test" do
   action :touch
 end
 },
-    'vars' => {'version' => '1.9.3-p448'},
+    'vars' => { 'version' => '1.9.3-p448' },
     'attributes' => %Q{
 default['component']['attr_one'] = 1
 default['component']['attr_two'] = 2
 },
     'templates' => [
-      { 'component.conf.erb' => 'ENABLED=yes'},
+      { 'component.conf.erb' => 'ENABLED=yes' },
     ],
     'tests' => '',
   }

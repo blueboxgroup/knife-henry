@@ -4,8 +4,8 @@ require_relative '../lib/knife-henry/factory'
 class TestFactory < Minitest::Test
   TEST_BLUEPRINT = {
     'name' => 'blueprint',
-    'roles' => {'test' => ["base"]},
-    'vars' => { 'base' => {'users' => ['admin', 'deploy']} }
+    'roles' => { 'test' => ["base"] },
+    'vars' => { 'base' => { 'users' => ['admin', 'deploy'] } }
   }
 
   def setup
