@@ -13,10 +13,10 @@ module KnifeHenry
       @blueprint = blueprint
       Chef::Knife::SoloInit.load_deps
       @solo = Chef::Knife::SoloInit.new
-      @solo.name_args = [ @blueprint.name ]
+      @solo.name_args = [@blueprint.name]
       @cookbook = Chef::Knife::CookbookCreate.new
       @cookbook.config[:cookbook_path] = "#{@blueprint.name}/site-cookbooks"
-      @cookbook.name_args = [ @blueprint.name ]
+      @cookbook.name_args = [@blueprint.name]
       validate!
     end
 

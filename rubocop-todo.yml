@@ -20,9 +20,6 @@ RedundantSelf:
 ShadowingOuterLocalVariable:
   Enabled: false
 
-SpaceInsideBrackets:
-  Enabled: false
-
 SpaceInsideHashLiteralBraces:
   Enabled: false
 
