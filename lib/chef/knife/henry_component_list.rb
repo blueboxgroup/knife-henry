@@ -25,7 +25,6 @@ class Chef
       private
 
       def load_libs
-        components = []
         henry_components = load_lib(KnifeHenry.const_get(:HENRY_LIB))
         user_components = load_lib(KnifeHenry.const_get(:USER_LIB))
         load_requests(henry_components.concat(user_components).sort.uniq)

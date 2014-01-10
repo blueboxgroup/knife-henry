@@ -23,8 +23,5 @@ ShadowingOuterLocalVariable:
 StringLiterals:
   Enabled: false
 
-UselessAssignment:
-  Enabled: false
-
 WordArray:
   Enabled: false
