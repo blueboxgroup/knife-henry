@@ -30,7 +30,7 @@ class Chef
         end
       end
 
-      def build_repo (blueprint_file)
+      def build_repo(blueprint_file)
         if File.exist?(blueprint_file)
           ui.info "Loading blueprint: #{blueprint_file}"
           blueprint = YAML.safe_load_file(blueprint_file)

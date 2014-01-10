@@ -4,7 +4,7 @@ module KnifeHenry
   class Blueprint
     attr_accessor :name, :roles, :vars
 
-    def initialize (blueprint = {})
+    def initialize(blueprint = {})
       validate!(blueprint)
       @name = blueprint['name'].to_s
       @roles = build_roles(blueprint['roles'])
@@ -16,13 +16,13 @@ module KnifeHenry
 
     private
 
-    def validate! (blueprint)
+    def validate!(blueprint)
       unless blueprint['name']
         fail ArgumentError, "Blueprint missing required argument: name"
       end
     end
 
-    def build_roles (r)
+    def build_roles(r)
       roles = []
       r.each_pair do |name, components|
         roles << KnifeHenry::Role.new('name'       => name,

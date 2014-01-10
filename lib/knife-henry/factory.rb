@@ -9,7 +9,7 @@ module KnifeHenry
   class Factory
     attr_accessor :blueprint, :solo, :cookbook
 
-    def initialize (blueprint)
+    def initialize(blueprint)
       @blueprint = blueprint
       Chef::Knife::SoloInit.load_deps
       @solo = Chef::Knife::SoloInit.new
@@ -48,7 +48,7 @@ module KnifeHenry
       end
     end
 
-    def render_berksfile (berks)
+    def render_berksfile(berks)
       repo = solo.name_args.first
       File.open(File.join(repo, "Berksfile"), 'w') do |berksfile|
         berksfile.write( berks.sort.uniq.join("\n") )

@@ -31,7 +31,7 @@ class Chef
         load_requests(henry_components.concat(user_components).sort.uniq)
       end
 
-      def load_requests (requests = [])
+      def load_requests(requests = [])
         components = []
         requests.each do |request|
           components << load_component(request)
@@ -39,13 +39,13 @@ class Chef
         return components
       end
 
-      def load_component (component)
+      def load_component(component)
         file = KnifeHenry.component(component)
         data = YAML.safe_load_file(file)
         KnifeHenry::Component.new(data)
       end
 
-      def load_lib (lib)
+      def load_lib(lib)
         components = []
         path = "#{lib}/resources/components"
         if Dir.exist?(path)

@@ -28,7 +28,7 @@ class Chef
         end
       end
 
-      def validate_blueprint! (name)
+      def validate_blueprint!(name)
         if File.exist?("#{name}.yml")
           ui.error "#{name}.yml already exists! Skipping."
           return false
@@ -36,7 +36,7 @@ class Chef
         return true
       end
 
-      def render_blueprint (name)
+      def render_blueprint(name)
         ui.info "Rendering blueprint: #{name}.yml"
         input = File.read(KnifeHenry.resource("blueprint.yml.erb"))
         template = Erubis::Eruby.new(input)

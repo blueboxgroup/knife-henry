@@ -5,7 +5,7 @@ module KnifeHenry
   class Role
     attr_accessor :name, :components
 
-    def initialize (opts = {})
+    def initialize(opts = {})
       validate!(opts)
       @name = opts['name']
       @components = []
@@ -16,7 +16,7 @@ module KnifeHenry
       end
     end
 
-    def render (context = {})
+    def render(context = {})
       validate_context!(context)
       components.each do |component|
         component.render(context)
@@ -40,13 +40,13 @@ module KnifeHenry
 
     private
 
-    def validate! (opts)
+    def validate!(opts)
       unless opts['name']
         fail ArgumentError, "Missing required argument for role: name"
       end
     end
 
-    def validate_context! (context)
+    def validate_context!(context)
       repo = File.expand_path(context[:repo])
       cookbook = File.join(repo, "site-cookbooks", context[:cookbook])
       if !Dir.exist?(repo)

@@ -27,7 +27,7 @@ class Chef
         end
       end
 
-      def show_component (component)
+      def show_component(component)
         file = KnifeHenry.component(component)
         if File.exist?(file)
           data = YAML.safe_load_file(file)

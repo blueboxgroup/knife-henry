@@ -27,7 +27,7 @@ class Chef
         end
       end
 
-      def load_component (file)
+      def load_component(file)
         if File.exist?(file)
           ui.info "Stocking new component: #{file}"
           data = YAML.safe_load_file(file)
