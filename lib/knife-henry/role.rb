@@ -27,8 +27,8 @@ module KnifeHenry
       template = Erubis::Eruby.new(src)
       file = File.join(context[:repo], "roles", "#{self.name}.rb")
       File.open(file, 'w') do |role|
-        role.write( template.evaluate({ :name       => self.name,
-                                        :components => self.components}) )
+        role.write( template.evaluate(:name       => self.name,
+                                      :components => self.components) )
       end
     end
 

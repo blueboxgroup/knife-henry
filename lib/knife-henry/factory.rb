@@ -27,8 +27,8 @@ module KnifeHenry
       berks = Array.new
       self.blueprint.roles.each do |role|
         berks << role.berks
-        role.render({ :repo     => self.solo.name_args.first,
-                      :cookbook => self.cookbook.name_args.first })
+        role.render(:repo     => self.solo.name_args.first,
+                    :cookbook => self.cookbook.name_args.first)
       end
       render_berksfile(berks.flatten)
       render_kitchen_yml
@@ -62,7 +62,7 @@ module KnifeHenry
       kitchen = File.read(KnifeHenry.resource("kitchen.yml.erb"))
       template = Erubis::Eruby.new(kitchen)
       File.open("#{repo}/.kitchen.yml", 'w') do |kitchen|
-        kitchen.write( template.evaluate({:roles => roles}) )
+        kitchen.write( template.evaluate(:roles => roles) )
       end
     end
   end

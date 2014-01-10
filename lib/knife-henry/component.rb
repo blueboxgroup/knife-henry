@@ -75,8 +75,8 @@ module KnifeHenry
       path = File.expand_path(repo)
       template = Erubis::Eruby.new(self.role)
       File.open(File.join(path, "roles", "#{self.name}.rb"), 'w') do |role|
-        role.write( template.evaluate({ :cookbook => cookbook,
-                                        :vars     => self.vars}) )
+        role.write( template.evaluate(:cookbook => cookbook,
+                                      :vars     => self.vars) )
       end
     end
 
