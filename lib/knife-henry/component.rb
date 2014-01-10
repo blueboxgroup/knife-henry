@@ -36,9 +36,9 @@ module KnifeHenry
     def save
       user_lib = KnifeHenry.const_get(:USER_LIB)
       f = File.join(user_lib, "resources", "components", "#{self.name}.yml")
-      File.open(f, 'w') { |file|
+      File.open(f, 'w') do |file|
         file.write(self.to_yaml)
-      }
+      end
     end
 
     private
@@ -66,34 +66,34 @@ module KnifeHenry
     def render_recipe (repo, cookbook)
       repo = File.expand_path(repo)
       path = File.join(repo, "site-cookbooks", cookbook)
-      File.open(File.join(path, "recipes", "#{self.name}.rb"), 'w') { |recipe|
+      File.open(File.join(path, "recipes", "#{self.name}.rb"), 'w') do |recipe|
         recipe.write(self.recipe)
-      }
+      end
     end
 
     def render_role (repo, cookbook)
       path = File.expand_path(repo)
       template = Erubis::Eruby.new(self.role)
-      File.open(File.join(path, "roles", "#{self.name}.rb"), 'w') { |role|
+      File.open(File.join(path, "roles", "#{self.name}.rb"), 'w') do |role|
         role.write( template.evaluate({ :cookbook => cookbook,
                                         :vars     => self.vars}) )
-      }
+      end
     end
 
     def render_attributes (repo, cookbook)
       path = File.expand_path(File.join(repo,"site-cookbooks", cookbook))
-      File.open(File.join(path, "attributes", "default.rb"), 'a') { |attr|
+      File.open(File.join(path, "attributes", "default.rb"), 'a') do |attr|
         attr.write(self.attributes)
-      }
+      end
     end
 
     def render_template (template, context)
       repo = File.expand_path(context[:repo])
       path = File.join(repo, "site-cookbooks", context[:cookbook])
       out = File.join(path, "templates", "default", template.name)
-      File.open(out, 'w') { |t|
+      File.open(out, 'w') do |t|
         t.write(template.content)
-      }
+      end
     end
   end
 end

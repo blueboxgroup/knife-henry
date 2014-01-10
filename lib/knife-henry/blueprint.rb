@@ -24,10 +24,10 @@ module KnifeHenry
 
     def build_roles (r)
       roles = Array.new
-      r.each_pair { |name, components|
+      r.each_pair do |name, components|
         roles << KnifeHenry::Role.new({ 'name'       => name,
                                         'components' => components })
-      }
+      end
       return roles
     end
 

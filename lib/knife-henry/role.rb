@@ -26,10 +26,10 @@ module KnifeHenry
       src = File.read(KnifeHenry.resource("role.rb.erb"))
       template = Erubis::Eruby.new(src)
       file = File.join(context[:repo], "roles", "#{self.name}.rb")
-      File.open(file, 'w') { |role|
+      File.open(file, 'w') do |role|
         role.write( template.evaluate({ :name       => self.name,
                                         :components => self.components}) )
-      }
+      end
     end
 
     def berks

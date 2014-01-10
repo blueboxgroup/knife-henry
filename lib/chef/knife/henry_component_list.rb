@@ -48,9 +48,9 @@ class Chef
         components = Array.new
         path = "#{lib}/resources/components"
         if Dir.exist?(path)
-          Dir.glob("#{path}/*.yml") { |file|
+          Dir.glob("#{path}/*.yml") do |file|
             components << File.basename(file).gsub(/\.yml$/, '')
-          }
+          end
         end
         return components
       end
