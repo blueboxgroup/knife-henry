@@ -51,7 +51,7 @@ module KnifeHenry
     def render_berksfile(berks)
       repo = solo.name_args.first
       File.open(File.join(repo, "Berksfile"), 'w') do |berksfile|
-        berksfile.write( berks.sort.uniq.join("\n") )
+        berksfile.write(berks.sort.uniq.join("\n"))
       end
     end
 
@@ -61,7 +61,7 @@ module KnifeHenry
       kitchen = File.read(KnifeHenry.resource("kitchen.yml.erb"))
       template = Erubis::Eruby.new(kitchen)
       File.open("#{repo}/.kitchen.yml", 'w') do |kitchen|
-        kitchen.write( template.evaluate(:roles => roles) )
+        kitchen.write(template.evaluate(:roles => roles))
       end
     end
   end
