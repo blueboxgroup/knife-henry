@@ -23,7 +23,7 @@ module KnifeHenry
     end
 
     def build_roles (r)
-      roles = Array.new
+      roles = []
       r.each_pair do |name, components|
         roles << KnifeHenry::Role.new('name'       => name,
                                       'components' => components)

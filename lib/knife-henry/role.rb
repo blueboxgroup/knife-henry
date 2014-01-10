@@ -8,8 +8,8 @@ module KnifeHenry
     def initialize (opts = {})
       validate!(opts)
       @name = opts['name']
-      @components = Array.new
-      opts['components'].is_a?(Array) || opts['components'] = Array.new
+      @components = []
+      opts['components'].is_a?(Array) || opts['components'] = []
       opts['components'].each do |c|
         component = YAML.safe_load_file( KnifeHenry.component(c) )
         @components << KnifeHenry::Component.new(component)
@@ -31,7 +31,7 @@ module KnifeHenry
     end
 
     def berks
-      berks = Array.new
+      berks = []
       self.components.each do |component|
         berks << component.berks.split(/\r?\n/) if component.berks
       end

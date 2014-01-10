@@ -16,8 +16,8 @@ module KnifeHenry
       @recipe = opts['recipe']
       @vars = opts['vars'] || {}
       @attributes = opts['attributes']
-      @templates = Array.new
-      opts['templates'] = Array.new unless opts['templates'].is_a? Array
+      @templates = []
+      opts['templates'] = [] unless opts['templates'].is_a? Array
       opts['templates'].each do |template|
         @templates << build_template(template)
       end

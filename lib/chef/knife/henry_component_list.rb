@@ -25,14 +25,14 @@ class Chef
       private
 
       def load_libs
-        components = Array.new
+        components = []
         henry_components = load_lib( KnifeHenry.const_get(:HENRY_LIB) )
         user_components = load_lib( KnifeHenry.const_get(:USER_LIB) )
         load_requests(henry_components.concat(user_components).sort.uniq)
       end
 
       def load_requests (requests = [])
-        components = Array.new
+        components = []
         requests.each do |request|
           components << load_component(request)
         end
@@ -46,7 +46,7 @@ class Chef
       end
 
       def load_lib (lib)
-        components = Array.new
+        components = []
         path = "#{lib}/resources/components"
         if Dir.exist?(path)
           Dir.glob("#{path}/*.yml") do |file|

@@ -24,7 +24,7 @@ module KnifeHenry
       self.solo.run
       self.cookbook.run
       render_toplevel_files
-      berks = Array.new
+      berks = []
       self.blueprint.roles.each do |role|
         berks << role.berks
         role.render(:repo     => self.solo.name_args.first,
