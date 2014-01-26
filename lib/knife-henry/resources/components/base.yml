@@ -4,7 +4,7 @@ berks: |
   cookbook 'chef-solo-search', git: 'https://github.com/edelight/chef-solo-search.git'
   cookbook 'denyhosts', git: 'https://github.com/phlipper/chef-denyhosts.git'
   cookbook 'packages', git: 'https://github.com/bbg-cookbooks/packages.git'
-  cookbook 'monit', git: 'https://github.com/blueboxgroup/monit.git'
+  cookbook 'monit', git: 'https://github.com/blueboxgroup/chef-monit.git'
   cookbook 'user', git: 'https://github.com/fnichol/chef-user.git'
   cookbook 'build-essential'
   cookbook 'timezone-ii'
@@ -19,7 +19,7 @@ role: |
   name 'base'
 
   default_attributes(
-    'tz' => 'UTC',
+    'tz' => 'America/Los_Angeles',
     'authorization' => {
       'sudo' => {
         'users'             => %w{admin},
@@ -61,8 +61,16 @@ recipe: |
     package pkg
   end
 
+  service 'sendmail' do
+    action [:disable, :stop]
+  end
+
   package 'sendmail' do
     action :purge
+  end
+
+  service 'postfix' do
+    action [:enable, :start]
   end
 
   rsyslog_pid = value_for_platform_family(
@@ -95,7 +103,7 @@ recipe: |
       },
       {
         'condition' => '3 restarts within 5 cycles',
-        'action'    => 'alert',
+        'action'    => 'timeout',
       },
     ]
   end
@@ -117,7 +125,7 @@ recipe: |
       },
       {
         'condition' => '3 restarts within 5 cycles',
-        'action'    => 'alert',
+        'action'    => 'timeout',
       },
     ]
   end
@@ -135,7 +143,7 @@ recipe: |
     tests [
       {
         'condition' => '3 restarts within 5 cycles',
-        'action'    => 'alert',
+        'action'    => 'timeout',
       },
     ]
   end

@@ -7,7 +7,7 @@ role: |
 
   default_attributes(
     'mongodb' => {
-      'package_version' => '2.4.7',
+      'package_version' => '2.4.9',
       'bind_ip'         => '0.0.0.0',
       'logpath'         => '/var/log/mongodb',
       'dbpath'          => '/srv/data/mongodb',

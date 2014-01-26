@@ -1,7 +1,7 @@
 ---
 name: memcache
 berks: |
-  cookbook 'memcached'
+  cookbook 'memcached', '~> 1.6'
 role: |
   name 'memcache'
 
@@ -37,8 +37,8 @@ recipe: |
         'action'    => 'restart',
       },
       {
-        'condition' => '3 restarts within 15 cycles',
-        'action'    => 'alert',
+        'condition' => '3 restarts within 10 cycles',
+        'action'    => 'timeout',
       },
     ]
   end
