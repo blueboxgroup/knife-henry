@@ -12,9 +12,9 @@ class Chef
 
       def run
         validate!
-        @name_args.each do |name|
-          next unless validate_blueprint!(name)
-          render_blueprint(name)
+        @name_args.each do |repo|
+          next unless validate_blueprint!(repo)
+          render_blueprint(repo)
         end
       end
 
@@ -28,19 +28,18 @@ class Chef
         end
       end
 
-      def validate_blueprint!(name)
-        if File.exist?("#{name}.yml")
-          ui.error "#{name}.yml already exists! Skipping."
-          return false
-        end
+      def validate_blueprint!(repo)
+        return true unless File.exist?("#{repo}.yml")
+        ui.error "#{repo}.yml already exists! Skipping."
+        return false
       end
 
-      def render_blueprint(name)
-        ui.info "Rendering blueprint: #{name}.yml"
+      def render_blueprint(repo)
+        ui.info "Rendering blueprint: #{repo}.yml"
         input = File.read(KnifeHenry.resource('blueprint.yml.erb'))
         template = Erubis::Eruby.new(input)
-        File.open("#{name}.yml", 'w') do |blueprint|
-          blueprint.write(template.evaluate(:name => name))
+        File.open("#{repo}.yml", 'w') do |blueprint|
+          blueprint.write(template.evaluate(:repo => repo))
         end
       end
     end

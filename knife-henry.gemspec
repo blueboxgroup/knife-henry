@@ -22,6 +22,6 @@ Gem::Specification.new do |s|
   s.post_install_message = KnifeHenry.post_install_message
 
   s.add_dependency 'knife-solo', '~> 0.4'
-  s.add_dependency 'safe_yaml',  '~> 0.9', '>= 0.9.5'
+  s.add_dependency 'safe_yaml',  '~> 1.0'
   s.add_dependency 'erubis',     '~> 2.7'
 end
