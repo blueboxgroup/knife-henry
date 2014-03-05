@@ -51,7 +51,7 @@ module KnifeHenry
     def render_berksfile(berks)
       repo = solo.name_args.first
       File.open(File.join(repo, 'Berksfile'), 'w') do |berksfile|
-        berksfile.write(berks.sort.uniq.join('\n'))
+        berksfile.puts(berks.sort.uniq)
       end
     end
 

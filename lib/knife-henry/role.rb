@@ -17,7 +17,7 @@ module KnifeHenry
 
     def render(context = {})
       validate_context!(context)
-      components.each do |component|
+      @components.each do |component|
         component.render(context)
       end
       src = File.read(KnifeHenry.resource('role.rb.erb'))
@@ -30,11 +30,11 @@ module KnifeHenry
     end
 
     def berks
-      Array.new.tap do |berks|
-        components.each do |component|
-          berks << component.berks.split(/\r?\n/) if component.berks
+      Array.new.tap do |berkshelf|
+        @components.each do |component|
+          berkshelf << component.berks.split(/\r?\n/) if component.berks
         end
-      end.flatten
+      end
     end
 
     private
