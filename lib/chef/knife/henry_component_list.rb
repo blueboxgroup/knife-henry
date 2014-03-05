@@ -43,10 +43,8 @@ class Chef
 
       def load_lib(lib)
         path = "#{lib}/resources/components"
-        Array.new.tap do |components|
-          Dir.glob("#{path}/*.yml") do |file|
-            components << File.basename(file).gsub(/\.yml$/, '')
-          end
+        Dir.glob("#{path}/*.yml").map do |file|
+          File.basename(file).gsub(/\.yml$/, '')
         end
       end
     end
