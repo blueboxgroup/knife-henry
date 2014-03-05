@@ -1,8 +1,8 @@
 source 'https://rubygems.org'
 
 gem 'knife-solo', '~> 0.4'
-gem 'knife-solo_data_bag'
-gem 'chef'
-gem 'berkshelf'
-gem 'test-kitchen'
-gem 'kitchen-bluebox'
+gem 'knife-solo_data_bag', '~> 1.0'
+gem 'chef', '~> 11.10'
+gem 'berkshelf', '~> 2.0'
+gem 'test-kitchen', '~> 1.2'
+gem 'kitchen-bluebox', '~> 0.6'
