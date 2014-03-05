@@ -1,9 +1,9 @@
 --- 
 name: <%= @repo %>
 roles:
-  bastion:
+ - bastion:
     - base 
-  app:
+ - app:
     - base
     - nginx
     - unicorn
@@ -11,17 +11,17 @@ roles:
     - nodejs
     - mysql-client
     - postgresql-client
-  db:
+ - db:
     - base
     - mysql-server
     - postgresql-server
-  cache:
+ - cache:
     - base
     - memcache
-  redis:
+ - redis:
     - base
     - redis-server
-  worker:
+ - worker:
     - base
     - ruby
     - postgresql-client
