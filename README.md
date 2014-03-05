@@ -8,31 +8,31 @@ A simple blueprint like this:
 --- 
 name: HenryCorp
 roles:
-  bastion:
+ - bastion:
     - base 
-  app:
+ - app:
     - base
     - nginx
     - unicorn
     - ruby
     - nodejs
     - postgresql-client
-  db:
+ - db:
     - base
     - postgresql-server
-  cache:
+ - cache:
     - base
     - memcache
-  redis:
+ - redis:
     - base
     - redis-server
-  worker:
+ - worker:
     - base
     - ruby
     - postgresql-client
 vars:
   ruby:
-    version: 2.0.0-p247
+    version: 2.1.1
 ```
 
 generates a chef-solo repository like this:
